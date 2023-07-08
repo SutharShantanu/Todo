@@ -8,18 +8,22 @@ import {
     HStack,
     Heading,
     Highlight,
+    IconButton,
     SkeletonText,
     Stack,
     Tag,
     TagLabel,
-    TagLeftIcon,
     Text,
     useColorModeValue,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import TodoCard from "../Components/TodoCard";
 
 const Todo = () => {
     const [isLoading, setIsLoading] = useState(true);
+    const handleAdd = () => {
+        
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -79,43 +83,82 @@ const Todo = () => {
                     </Stack>
                 )}
             </Container>
-            <Divider />
-            <HStack
-                bg={useColorModeValue("white", "gray.700")}
-                spacing={8}
-                w="80%"
+            {/* <Divider /> */}
+            <Box
+                w="70%"
                 m="auto"
-                border="1px solid red">
-                <Flex
-                    justifyContent="space-between"
-                    bg={useColorModeValue("white", "gray.700")}
-                    // border="1px solid blue"
-                    w="30%"
-                    m="auto">
-                    <Tag size="lg" borderRadius="full">
-                        <TagLabel>All</TagLabel>
-                    </Tag>
-
-                    <Tag size="lg" borderRadius="full">
-                        <TagLeftIcon boxSize="12px" as={AddIcon} />
-
-                        <TagLabel>Pending</TagLabel>
-                    </Tag>
-
-                    <Tag size="lg" borderRadius="full">
-                        <TagLeftIcon boxSize="12px" as={AddIcon} />
-
-                        <TagLabel>Completed</TagLabel>
-                    </Tag>
-                </Flex>
-                <Box
-                    bg={useColorModeValue("white", "gray.700")}
+                boxShadow="md"
+                rounded="2xl"
+                py="4"
+                // border="1px solid red"
+                bg={useColorModeValue("gray.200", "gray.900")}>
+                <HStack
+                    bg={useColorModeValue("gray.200", "gray.900")}
                     spacing={8}
-                    border="1px solid green"
-                    w="30%"
-                    h="100%"
-                    m="auto"></Box>
-            </HStack>
+                    my="4">
+                    <Box w="60%" m="auto">
+                        <Flex
+                            justifyContent="space-between"
+                            bg={useColorModeValue("gray.200", "gray.900")}>
+                            <Flex
+                                justifyContent="space-between"
+                                bg={useColorModeValue("gray.200", "gray.900")}
+                                w="50%">
+                                <Tag
+                                    size="lg"
+                                    boxShadow="md"
+                                    variant="subtle"
+                                    borderRadius="full"
+                                    colorScheme="green">
+                                    <TagLabel>All</TagLabel>
+                                </Tag>
+
+                                <Tag
+                                    size="lg"
+                                    borderRadius="full"
+                                    boxShadow="md"
+                                    variant="subtle">
+                                    <TagLabel>Pending</TagLabel>
+                                </Tag>
+
+                                <Tag
+                                    size="lg"
+                                    borderRadius="full"
+                                    boxShadow="md"
+                                    variant="subtle">
+                                    <TagLabel>Completed</TagLabel>
+                                </Tag>
+                            </Flex>
+                            <Flex
+                                justifyContent="end"
+                                bg={useColorModeValue("gray.200", "gray.900")}
+                                w="40%">
+                                <IconButton
+                                    boxShadow="md"
+                                    rounded="full"
+                                    colorScheme="green"
+                                    // size="lg"
+                                    onClick={handleAdd}
+                                    icon={<AddIcon />}
+                                />
+                            </Flex>
+                        </Flex>
+
+                        <TodoCard />
+                    </Box>
+                    <Box
+                        bg={useColorModeValue("gray.200", "gray.900")}
+                        spacing={8}
+                        // border="1px solid green"
+                        rounded={"2xl"}
+                        textAlign="center"
+                        w="30%"
+                        h="100%"
+                        m="auto">
+                        Chart
+                    </Box>
+                </HStack>
+            </Box>
         </Box>
     );
 };

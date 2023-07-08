@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import AudioPlayer from "react-audio-player";
 
-const Modals = ({ isModal, setIsModal }) => {
+const TuneModal = ({ isModal, setIsModal }) => {
     const ringtones = [
         {
             name: "Alarm Clock",
@@ -143,4 +143,4 @@ const Modals = ({ isModal, setIsModal }) => {
     );
 };
 
-export default Modals;
+export default TuneModal;

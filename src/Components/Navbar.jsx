@@ -20,22 +20,6 @@ import {
     Menu,
     MenuList,
     MenuItem,
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalBody,
-    Text,
-    ModalFooter,
-    ModalOverlay,
-    Select,
-    FormLabel,
-    FormControl,
-    RadioGroup,
-    Radio,
-    VStack,
-    FormHelperText,
-    Divider,
 } from "@chakra-ui/react";
 import {
     SearchIcon,
@@ -51,7 +35,7 @@ import { CgMoreVerticalAlt } from "react-icons/cg";
 import { Link as ReactLink } from "react-router-dom";
 import Light from "../Utilis/Light.png";
 import Dark from "../Utilis/Dark.png";
-import Modals from "./Modals";
+import TuneModal from "./Modals/TuneModal";
 
 export default function Navbar() {
     const { isOpen, onToggle } = useDisclosure();
@@ -187,7 +171,7 @@ export default function Navbar() {
                     </Tooltip>
                 </HStack>
                 {isModal === true ? (
-                    <Modals isModal={isModal} setIsModal={setIsModal} />
+                    <TuneModal isModal={isModal} setIsModal={setIsModal} />
                 ) : (
                     ""
                 )}
