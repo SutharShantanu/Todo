@@ -20,12 +20,50 @@ import {
 import AudioPlayer from "react-audio-player";
 
 const Modals = ({ isModal, setIsModal }) => {
-    const [selectedRingtone, setSelectedRingtone] = useState("");
     const ringtones = [
-        { name: "Ambulance", src: "../Utilis/Tunes/Ambulance.ogg" },
-        { name: "Ringtone 2", src: "path/to/ringtone2.mp3" },
-        { name: "Ringtone 3", src: "path/to/ringtone3.mp3" },
+        {
+            name: "Alarm Clock",
+            src: "https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg",
+        },
+        {
+            name: "Bugle Tune",
+            src: "https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg",
+        },
+        {
+            name: "Digital Watch Alarm Long",
+            src: "https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg",
+        },
+        {
+            name: "Dinner Bell Triangle",
+            src: "https://actions.google.com/sounds/v1/alarms/dinner_bell_triangle.ogg",
+        },
+        {
+            name: "Dosimeter Alarm",
+            src: "https://actions.google.com/sounds/v1/alarms/dosimeter_alarm.ogg",
+        },
+        {
+            name: "Mechanical Clock Ring",
+            src: "https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring.ogg",
+        },
+        {
+            name: "Medium Bell Ringing Near",
+            src: "https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg",
+        },
+
+        {
+            name: "Radiation Meter",
+            src: "https://actions.google.com/sounds/v1/alarms/radiation_meter.ogg",
+        },
+        {
+            name: "Setting Alarm Clock",
+            src: "https://actions.google.com/sounds/v1/alarms/setting_alarm_clock.ogg",
+        },
+        {
+            name: "Spaceship Alarm",
+            src: "https://actions.google.com/sounds/v1/alarms/spaceship_alarm.ogg",
+        },
     ];
+    const [selectedRingtone, setSelectedRingtone] = useState(ringtones[0].src);
 
     const handleCheckboxChange = (value) => {
         setSelectedRingtone(value);
@@ -42,6 +80,8 @@ const Modals = ({ isModal, setIsModal }) => {
     return (
         <Modal
             isCentered
+            size="xs"
+            height="40vh"
             isOpen={isModal}
             onClose={handleClose}
             scrollBehavior="inside"
@@ -53,7 +93,7 @@ const Modals = ({ isModal, setIsModal }) => {
                 <ModalCloseButton />
                 <ModalBody>
                     <FormControl>
-                        <FormLabel>Ringtone</FormLabel>
+                        <FormLabel>Tunes</FormLabel>
                         <RadioGroup
                             value={selectedRingtone}
                             onChange={handleCheckboxChange}>
@@ -76,7 +116,7 @@ const Modals = ({ isModal, setIsModal }) => {
                             <AudioPlayer
                                 src={selectedRingtone}
                                 onPlay={handleAudioPlay}
-                                controls
+                                // controls
                                 autoPlay
                             />
                         )}
