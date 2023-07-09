@@ -18,16 +18,24 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import TodoCard from "../Components/TodoCard";
+import AddModal from "../Components/Modals/AddModal";
 
 const Todo = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const handleAdd = () => {
-        
+    const [isModal, setIsModal] = useState(false);
+    const [todos, setTodos] = useState([]);
+
+    const handleDeleteTodo = (id) => {
+        const updatedTodos = todos.filter((todo) => todo.id !== id);
+        setTodos(updatedTodos);
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
     };
 
     useEffect(() => {
         setIsLoading(true);
         setTimeout(() => {
+            const storedTodos = JSON.parse(localStorage.getItem("todos")) || [];
+            setTodos(storedTodos);
             setIsLoading(false);
         }, 2000);
     }, []);
@@ -138,13 +146,28 @@ const Todo = () => {
                                     rounded="full"
                                     colorScheme="green"
                                     // size="lg"
-                                    onClick={handleAdd}
+                                    onClick={() => setIsModal(true)}
                                     icon={<AddIcon />}
                                 />
                             </Flex>
+                            {isModal === true ? (
+                                <AddModal
+                                    isModal={isModal}
+                                    setIsModal={setIsModal}
+                                />
+                            ) : (
+                                ""
+                            )}
                         </Flex>
 
-                        <TodoCard />
+                        {todos.map((ele) => (
+                            <TodoCard
+                                id={ele.id}
+                                title={ele.title}
+                                status={ele.status}
+                                onDelete={handleDeleteTodo}
+                            />
+                        ))}
                     </Box>
                     <Box
                         bg={useColorModeValue("gray.200", "gray.900")}

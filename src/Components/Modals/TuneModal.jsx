@@ -123,7 +123,7 @@ const TuneModal = ({ isModal, setIsModal }) => {
                     </Box>
                 </ModalBody>
                 <ModalFooter
-                    w="50%"
+                    w="80%"
                     m="auto"
                     display="flex"
                     justifyContent="space-between">
