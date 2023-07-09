@@ -1,18 +1,11 @@
-import { CheckCircleIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import {
-    Heading,
-    Box,
-    Button,
-    Badge,
-    useColorModeValue,
-    HStack,
-    Flex,
-} from "@chakra-ui/react";
+import { Box, Button, Badge, Heading, HStack, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import Alert from "./Alert";
+import { CheckCircleIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 
-export default function TodoCard({ id, title, status, onDelete }) {
+export default function TodoCard({ id, title, status, onDelete, onChange }) {
     const [isAlertOpen, setIsAlertOpen] = useState(false);
+    const [currentStatus, setCurrentStatus] = useState(status);
 
     const handleDelete = () => {
         setIsAlertOpen(true);
@@ -27,16 +20,21 @@ export default function TodoCard({ id, title, status, onDelete }) {
         setIsAlertOpen(false);
     };
 
+    const handleComplete = () => {
+        setCurrentStatus("completed");
+        onChange(id);
+    };
+
     return (
         <>
             <Flex
                 key={id}
                 position="relative"
                 w="full"
-                bg={useColorModeValue("white", "gray.700")}
+                bg="white"
                 boxShadow="md"
                 rounded="2xl"
-                my={12}
+                mt={12}
                 p={6}
                 justifyContent="space-between"
                 spacing={4}>
@@ -44,36 +42,58 @@ export default function TodoCard({ id, title, status, onDelete }) {
                     position="absolute"
                     top="-16px"
                     left="50%"
-                    style={{ transform: "translate(-50%)" }}>
+                    transform="translateX(-50%)">
                     <Badge
                         variant="subtle"
-                        bg={useColorModeValue("red.100", "red.200")}
-                        color="#1d1d1f"
-                        fontWeight="thin"
+                        bg={
+                            currentStatus === "completed"
+                                ? "green.100"
+                                : "red.100"
+                        }
+                        color="gray.900"
+                        fontWeight="normal"
                         px={2}
                         textTransform="capitalize"
                         py={1}
-                        rounded="full">
-                        {status}
+                        rounded="full"
+                        align="center">
+                        {currentStatus}
                     </Badge>
                 </Box>
-                <Heading fontSize="4xl" fontFamily="body" w="40%">
+                <Heading
+                    fontSize="4xl"
+                    fontFamily="body"
+                    w="40%"
+                    color={currentStatus === "completed" ? "gray.400" : ""}
+                    textDecoration={
+                        currentStatus === "completed" ? "line-through" : "none"
+                    }>
                     {title}
                 </Heading>
                 <HStack w="60%" justifyContent="space-between">
                     <Button
-                        fontWeight="thin"
+                        fontWeight="normal"
                         fontSize="sm"
                         rounded="full"
+                        bg="gray.200"
                         leftIcon={<EditIcon />}
+                        _hover={{
+                            bg: "gray.300",
+                        }}
                         _focus={{
-                            bg: "gray.200",
-                        }}>
+                            bg: "gray.300",
+                        }}
+                        textDecoration={
+                            currentStatus === "completed"
+                                ? "line-through"
+                                : "none"
+                        }
+                        isDisabled={currentStatus === "completed"}>
                         Edit
                     </Button>
                     <Button
                         fontSize="sm"
-                        fontWeight="thin"
+                        fontWeight="normal"
                         rounded="full"
                         bg="red.400"
                         color="white"
@@ -91,7 +111,7 @@ export default function TodoCard({ id, title, status, onDelete }) {
                     <Button
                         fontSize="sm"
                         rounded="full"
-                        fontWeight="thin"
+                        fontWeight="normal"
                         bg="blue.400"
                         color="white"
                         leftIcon={<CheckCircleIcon />}
@@ -101,7 +121,14 @@ export default function TodoCard({ id, title, status, onDelete }) {
                         }}
                         _focus={{
                             bg: "blue.500",
-                        }}>
+                        }}
+                        onClick={handleComplete}
+                        textDecoration={
+                            currentStatus === "completed"
+                                ? "line-through"
+                                : "none"
+                        }
+                        isDisabled={currentStatus === "completed"}>
                         Completed
                     </Button>
                 </HStack>

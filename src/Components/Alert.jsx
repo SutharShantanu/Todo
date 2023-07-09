@@ -66,7 +66,7 @@ const Alert = ({ isOpen, onConfirm, onCancel, title }) => {
                             variant="solid"
                             rounded="2xl"
                             onClick={handleClose}
-                            isDisabled={isLoading} // Disable button during loading state
+                            isDisabled={isLoading} 
                         >
                             No
                         </Button>

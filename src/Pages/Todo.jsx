@@ -27,7 +27,18 @@ const Todo = () => {
     const [todos, setTodos] = useState([]);
     const toast = useToast();
 
-
+    const handleChangeStatus = (id) => {
+        setTodos((ele) => {
+            const updatedTodos = ele.map((todo) => {
+                if (todo.id === id) {
+                    return { ...todo, status: "completed" };
+                }
+                return todo;
+            });
+            localStorage.setItem("todos", JSON.stringify(updatedTodos));
+            return updatedTodos;
+        });
+    };
     const handleDeleteTodo = (id, title) => {
         setIsLoading(true);
         setTimeout(() => {
@@ -35,10 +46,11 @@ const Todo = () => {
             setTodos(updatedTodos);
             localStorage.setItem("todos", JSON.stringify(updatedTodos));
             toast({
-                title: "Todo Deleted",
-                description: `"${title}" has been deleted.`,
-                status: "success",
+                title: `${title} has been deleted.`,
+                description: ``,
+                status: "error",
                 duration: 2000,
+                position: "top",
                 isClosable: true,
             });
             setIsLoading(false);
@@ -54,7 +66,6 @@ const Todo = () => {
         }, 2000);
     }, []);
     const total = todos.length.toString();
-
 
     return (
         <Box bg={useColorModeValue("white", "gray.700")} h="91vh">
@@ -167,6 +178,7 @@ const Todo = () => {
                                 title={ele.title}
                                 status={ele.status}
                                 onDelete={handleDeleteTodo}
+                                onChange={handleChangeStatus}
                             />
                         ))}
                     </Box>
