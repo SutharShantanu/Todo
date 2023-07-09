@@ -15,6 +15,7 @@ import {
     TagLabel,
     Text,
     useColorModeValue,
+    useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import TodoCard from "../Components/TodoCard";
@@ -24,11 +25,24 @@ const Todo = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isModal, setIsModal] = useState(false);
     const [todos, setTodos] = useState([]);
+    const toast = useToast();
 
-    const handleDeleteTodo = (id) => {
-        const updatedTodos = todos.filter((todo) => todo.id !== id);
-        setTodos(updatedTodos);
-        localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
+    const handleDeleteTodo = (id, title) => {
+        setIsLoading(true);
+        setTimeout(() => {
+            const updatedTodos = todos.filter((todo) => todo.id !== id);
+            setTodos(updatedTodos);
+            localStorage.setItem("todos", JSON.stringify(updatedTodos));
+            toast({
+                title: "Todo Deleted",
+                description: `"${title}" has been deleted.`,
+                status: "success",
+                duration: 2000,
+                isClosable: true,
+            });
+            setIsLoading(false);
+        }, 2000);
     };
 
     useEffect(() => {
@@ -39,9 +53,11 @@ const Todo = () => {
             setIsLoading(false);
         }, 2000);
     }, []);
+    const total = todos.length.toString();
+
 
     return (
-        <Box bg={useColorModeValue("white", "gray.700")} mb={8}>
+        <Box bg={useColorModeValue("white", "gray.700")} h="91vh">
             <Container maxW={"7xl"} py={16} as={Stack} spacing={12}>
                 {isLoading ? (
                     <Stack spacing={0} align={"center"}>
@@ -73,20 +89,21 @@ const Todo = () => {
                         <Heading as={"h1"} size={{ base: "xl", md: "4xl" }}>
                             Your Todos&nbsp;
                             <Highlight
-                                query={"0"}
+                                query={total}
                                 styles={{
                                     px: "2",
                                     py: "1",
                                     rounded: "2xl",
                                     bg: "orange.200",
                                 }}>
-                                {"0"}
+                                {total}
                             </Highlight>
                         </Heading>
                         <Text
                             fontSize={{ base: "xl", md: "2xl" }}
+                            mt={2}
                             color={"gray.500"}>
-                            Todo that help to manage your life
+                            Todo that helps to manage your life
                         </Text>
                     </Stack>
                 )}
@@ -98,20 +115,14 @@ const Todo = () => {
                 boxShadow="md"
                 rounded="2xl"
                 py="4"
-                // border="1px solid red"
                 bg={useColorModeValue("gray.200", "gray.900")}>
                 <HStack
                     bg={useColorModeValue("gray.200", "gray.900")}
                     spacing={8}
                     my="4">
                     <Box w="60%" m="auto">
-                        <Flex
-                            justifyContent="space-between"
-                            bg={useColorModeValue("gray.200", "gray.900")}>
-                            <Flex
-                                justifyContent="space-between"
-                                bg={useColorModeValue("gray.200", "gray.900")}
-                                w="50%">
+                        <Flex justifyContent="space-between">
+                            <HStack>
                                 <Tag
                                     size="lg"
                                     boxShadow="md"
@@ -120,7 +131,6 @@ const Todo = () => {
                                     colorScheme="green">
                                     <TagLabel>All</TagLabel>
                                 </Tag>
-
                                 <Tag
                                     size="lg"
                                     borderRadius="full"
@@ -128,7 +138,6 @@ const Todo = () => {
                                     variant="subtle">
                                     <TagLabel>Pending</TagLabel>
                                 </Tag>
-
                                 <Tag
                                     size="lg"
                                     borderRadius="full"
@@ -136,32 +145,24 @@ const Todo = () => {
                                     variant="subtle">
                                     <TagLabel>Completed</TagLabel>
                                 </Tag>
-                            </Flex>
-                            <Flex
-                                justifyContent="end"
-                                bg={useColorModeValue("gray.200", "gray.900")}
-                                w="40%">
-                                <IconButton
-                                    boxShadow="md"
-                                    rounded="full"
-                                    colorScheme="green"
-                                    // size="lg"
-                                    onClick={() => setIsModal(true)}
-                                    icon={<AddIcon />}
-                                />
-                            </Flex>
-                            {isModal === true ? (
-                                <AddModal
-                                    isModal={isModal}
-                                    setIsModal={setIsModal}
-                                />
-                            ) : (
-                                ""
-                            )}
+                            </HStack>
+                            <IconButton
+                                boxShadow="md"
+                                rounded="full"
+                                colorScheme="green"
+                                onClick={() => setIsModal(true)}
+                                icon={<AddIcon />}
+                            />
                         </Flex>
-
+                        {isModal && (
+                            <AddModal
+                                isModal={isModal}
+                                setIsModal={setIsModal}
+                            />
+                        )}
                         {todos.map((ele) => (
                             <TodoCard
+                                key={ele.id}
                                 id={ele.id}
                                 title={ele.title}
                                 status={ele.status}
@@ -171,8 +172,6 @@ const Todo = () => {
                     </Box>
                     <Box
                         bg={useColorModeValue("gray.200", "gray.900")}
-                        spacing={8}
-                        // border="1px solid green"
                         rounded={"2xl"}
                         textAlign="center"
                         w="30%"

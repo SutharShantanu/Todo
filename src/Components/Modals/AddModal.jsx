@@ -24,7 +24,7 @@ let idCounter = 0; // Initialize the counter
 
 const AddModal = ({ isModal, setIsModal }) => {
     const [title, setTitle] = useState("");
-    const [isButLoading, setIsButLoading] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
     const toast = useToast();
 
     const handleChange = (e) => {
@@ -36,7 +36,7 @@ const AddModal = ({ isModal, setIsModal }) => {
 
     const handleAdd = () => {
         if (title !== "") {
-            setIsButLoading(true);
+            setIsAdding(true);
             setTimeout(() => {
                 const todoData = {
                     id: idCounter++, // Generate a unique ID using the counter
@@ -47,7 +47,7 @@ const AddModal = ({ isModal, setIsModal }) => {
                     JSON.parse(localStorage.getItem("todos")) || [];
                 const updatedTodos = [...existingTodos, todoData];
                 localStorage.setItem("todos", JSON.stringify(updatedTodos));
-                setIsButLoading(false);
+                setIsAdding(false);
                 toast({
                     title: "Todo added to list",
                     description: "",
@@ -121,17 +121,12 @@ const AddModal = ({ isModal, setIsModal }) => {
                         colorScheme="green"
                         fontWeight="normal"
                         rounded="2xl"
-                        onClick={handleAdd}>
-                        {!isButLoading && `Save`}
-                        {isButLoading && (
-                            <Spinner
-                                thickness="2px"
-                                speed="0.50s"
-                                emptyColor="gray.200"
-                                color="#323234"
-                                size="xs"
-                            />
-                        )}
+                        onClick={handleAdd}
+                        isLoading={isAdding}
+                        loadingText="Adding"
+                        spinner={<Spinner color="#323234" size="xs" />}
+                        isDisabled={isAdding}>
+                        Add
                     </Button>
                     <Button
                         fontWeight="normal"

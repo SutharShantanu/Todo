@@ -1,7 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Belanosima&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 * {
-    font-family: "Belanosima", sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
 body {
