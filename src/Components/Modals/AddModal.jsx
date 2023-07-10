@@ -17,15 +17,25 @@ import {
     Spinner,
     useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PiTextTLight } from "react-icons/pi";
 
-let idCounter = 0; // Initialize the counter
+let idCounter = null;
 
-const AddModal = ({ isModal, setIsModal }) => {
+const AddModal = ({ isModal, setIsModal, onAddTodo }) => {
     const [title, setTitle] = useState("");
     const [isAdding, setIsAdding] = useState(false);
     const toast = useToast();
+
+    useEffect(() => {
+        const existingTodos = JSON.parse(localStorage.getItem("todos")) || [];
+        if (existingTodos.length > 0) {
+            const lastTodo = existingTodos[existingTodos.length - 1];
+            idCounter = lastTodo.id + 1;
+        } else {
+            idCounter = 0;
+        }
+    }, []);
 
     const handleChange = (e) => {
         const capitalizedTitle = e.target.value.replace(/^\w/, (c) =>
@@ -39,20 +49,17 @@ const AddModal = ({ isModal, setIsModal }) => {
             setIsAdding(true);
             setTimeout(() => {
                 const todoData = {
-                    id: idCounter++, // Generate a unique ID using the counter
+                    id: idCounter++,
                     title: title,
                     status: "pending",
                 };
-                const existingTodos =
-                    JSON.parse(localStorage.getItem("todos")) || [];
-                const updatedTodos = [...existingTodos, todoData];
-                localStorage.setItem("todos", JSON.stringify(updatedTodos));
+                onAddTodo(todoData);
                 setIsAdding(false);
                 toast({
                     title: "Todo added to list",
                     description: "",
                     status: "success",
-                    variant: "subtle",
+                    variant: "solid",
                     duration: 2000,
                     isClosable: true,
                     position: "top",
@@ -72,6 +79,8 @@ const AddModal = ({ isModal, setIsModal }) => {
             return;
         }
     };
+
+
 
     const handleClose = () => {
         setIsModal(false);

@@ -8,21 +8,16 @@ import {
     useDisclosure,
     useColorModeValue,
     Stack,
-    InputRightElement,
     Tooltip,
-    Input,
     useColorMode,
-    Spinner,
     Collapse,
     Image,
-    InputGroup,
     MenuButton,
     Menu,
     MenuList,
     MenuItem,
 } from "@chakra-ui/react";
 import {
-    SearchIcon,
     MoonIcon,
     SunIcon,
     HamburgerIcon,
@@ -41,11 +36,13 @@ export default function Navbar() {
     const { isOpen, onToggle } = useDisclosure();
     const [isModal, setIsModal] = useState(false);
     const { colorMode, toggleColorMode } = useColorMode();
-    const [isButLoading, setIsButLoading] = useState(false);
     const logo = colorMode === "light" ? Light : Dark;
 
     return (
-        <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+        <Box
+            bg={useColorModeValue("gray.100", "gray.900")}
+            px={4}
+            boxShadow="lg">
             <Flex h={16} alignItems="center" justifyContent="space-between">
                 <IconButton
                     size="md"
@@ -64,70 +61,7 @@ export default function Navbar() {
                         />
                     </ReactLink>
                 </HStack>
-                <HStack
-                    spacing={2}
-                    display={{ base: "none", md: "flex" }}
-                    width="30%">
-                    <InputGroup w="100%">
-                        <Input
-                            type="search"
-                            placeholder="Search your todos 📝"
-                            style={{
-                                border: `1px solid ${
-                                    colorMode === "light"
-                                        ? "gray.500"
-                                        : "gray.700"
-                                }`,
-                                transition: "border-color 0.2s",
-                            }}
-                            _hover={{
-                                textDecoration: "none",
-                                bg:
-                                    colorMode === "light"
-                                        ? "gray.200"
-                                        : "gray.700",
-                            }}
-                            _focusVisible={{
-                                outline: "none",
-                                border: `1px solid ${
-                                    colorMode === "light"
-                                        ? "gray.500"
-                                        : "gray.700"
-                                }`,
-                                bg:
-                                    colorMode === "light"
-                                        ? "gray.200"
-                                        : "gray.700",
-                            }}
-                            // value={search}
-                            // onKeyPress={handleKeyPress}
-                            // onChange={handleChange}
-                        />
-
-                        <InputRightElement width="11%">
-                            <Tooltip
-                                hasArrow
-                                label="Search Now"
-                                bg="gray.300"
-                                color="#323234">
-                                <Button
-                                    style={{ backgroundColor: "transparent" }}>
-                                    {!isButLoading ? (
-                                        <SearchIcon />
-                                    ) : (
-                                        <Spinner
-                                            thickness="2px"
-                                            speed="0.50s"
-                                            emptyColor="gray.200"
-                                            color="#323234"
-                                            size="xs"
-                                        />
-                                    )}
-                                </Button>
-                            </Tooltip>
-                        </InputRightElement>
-                    </InputGroup>
-                </HStack>
+                <HStack></HStack>
                 <HStack
                     width={{ base: "10%", md: "30%" }}
                     alignItems="end"
@@ -153,10 +87,26 @@ export default function Navbar() {
                         <Menu>
                             <MenuButton
                                 as={IconButton}
+                                bg={useColorModeValue(
+                                    "gray.100",
+                                    "whiteAlpha.200"
+                                )}
+                                _hover={{
+                                    bg: `${useColorModeValue(
+                                        "gray.200",
+                                        "whiteAlpha.300"
+                                    )}`,
+                                }}
+                                _active={{
+                                    bg: `${useColorModeValue(
+                                        "gray.300",
+                                        "whiteAlpha.400"
+                                    )}`,
+                                }}
                                 aria-label="Options"
                                 icon={<CgMoreVerticalAlt />}
                                 rounded="full"
-                                variant="outline"
+                                // variant="outline"
                             />
                             <MenuList>
                                 <MenuItem icon={<AddIcon />}>New Todo</MenuItem>
@@ -179,69 +129,7 @@ export default function Navbar() {
 
             <Collapse in={isOpen} animateOpacity>
                 <Box pb={4} display={{ md: "none" }}>
-                    <Stack spacing={4}>
-                        <InputGroup w="100%">
-                            <Input
-                                type="search"
-                                placeholder="Search your todos 📝"
-                                style={{
-                                    border: `1px solid ${
-                                        colorMode === "light"
-                                            ? "gray.500"
-                                            : "gray.700"
-                                    }`,
-                                    transition: "border-color 0.2s",
-                                }}
-                                _hover={{
-                                    textDecoration: "none",
-                                    bg:
-                                        colorMode === "light"
-                                            ? "gray.200"
-                                            : "gray.700",
-                                }}
-                                _focusVisible={{
-                                    outline: "none",
-                                    border: `1px solid ${
-                                        colorMode === "light"
-                                            ? "gray.500"
-                                            : "gray.700"
-                                    }`,
-                                    bg:
-                                        colorMode === "light"
-                                            ? "gray.200"
-                                            : "gray.700",
-                                }}
-                                // value={search}
-                                // onKeyPress={handleKeyPress}
-                                // onChange={handleChange}
-                            />
-
-                            <InputRightElement width="11%">
-                                <Tooltip
-                                    hasArrow
-                                    label="Search Now"
-                                    bg="gray.300"
-                                    color="#323234">
-                                    <Button
-                                        style={{
-                                            backgroundColor: "transparent",
-                                        }}>
-                                        {!isButLoading ? (
-                                            <SearchIcon />
-                                        ) : (
-                                            <Spinner
-                                                thickness="2px"
-                                                speed="0.50s"
-                                                emptyColor="gray.200"
-                                                color="#323234"
-                                                size="xs"
-                                            />
-                                        )}
-                                    </Button>
-                                </Tooltip>
-                            </InputRightElement>
-                        </InputGroup>
-                    </Stack>
+                    <Stack spacing={4}></Stack>
                 </Box>
             </Collapse>
         </Box>

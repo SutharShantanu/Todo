@@ -1,31 +1,47 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { AddIcon } from "@chakra-ui/icons";
 import {
     Box,
     Container,
-    Divider,
     Flex,
     HStack,
     Heading,
     Highlight,
     IconButton,
+    Input,
     SkeletonText,
     Stack,
     Tag,
     TagLabel,
     Text,
+    Tooltip,
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import TodoCard from "../Components/TodoCard";
 import AddModal from "../Components/Modals/AddModal";
+import { AddIcon } from "@chakra-ui/icons";
 
 const Todo = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isModal, setIsModal] = useState(false);
     const [todos, setTodos] = useState([]);
+    const [search, setSearch] = useState("");
+    const [filteredTodos, setFilteredTodos] = useState([]);
     const toast = useToast();
+
+    const handleAddTodo = (newTodo) => {
+        setTodos((prevTodos) => {
+            const updatedTodos = [...prevTodos, newTodo];
+            localStorage.setItem("todos", JSON.stringify(updatedTodos));
+            return updatedTodos;
+        });
+
+        setFilteredTodos((prevFilteredTodos) => {
+            return [...prevFilteredTodos, newTodo];
+        });
+    };
+
 
     const handleChangeStatus = (id) => {
         setTodos((ele) => {
@@ -35,10 +51,12 @@ const Todo = () => {
                 }
                 return todo;
             });
+
             localStorage.setItem("todos", JSON.stringify(updatedTodos));
             return updatedTodos;
         });
     };
+
     const handleDeleteTodo = (id, title) => {
         setIsLoading(true);
         setTimeout(() => {
@@ -47,7 +65,7 @@ const Todo = () => {
             localStorage.setItem("todos", JSON.stringify(updatedTodos));
             toast({
                 title: `${title} has been deleted.`,
-                description: ``,
+                description: "",
                 status: "error",
                 duration: 2000,
                 position: "top",
@@ -58,17 +76,46 @@ const Todo = () => {
     };
 
     useEffect(() => {
-        setIsLoading(true);
         setTimeout(() => {
             const storedTodos = JSON.parse(localStorage.getItem("todos")) || [];
             setTodos(storedTodos);
             setIsLoading(false);
         }, 2000);
     }, []);
-    const total = todos.length.toString();
+
+    useEffect(() => {
+        const filteredTodos = todos.filter((todo) =>
+            todo.title.toLowerCase().includes(search.toLowerCase())
+        );
+        setFilteredTodos(filteredTodos);
+    }, [search, todos]);
+
+    const pendingTodos = todos.filter((todo) => todo.status === "pending");
+    const completedTodos = todos.filter((todo) => todo.status === "completed");
+    const total = pendingTodos.length.toString();
+
+    const sortedTodos = [...pendingTodos, ...completedTodos];
+    const todosToDisplay = filteredTodos.length ? filteredTodos : sortedTodos;
+
+    const handleChange = (e) => {
+        setSearch(e.target.value);
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            handleSearch();
+        }
+    };
+
+    const handleSearch = () => {
+        const filteredTodos = todos.filter((todo) =>
+            todo.title.toLowerCase().includes(search.toLowerCase())
+        );
+        setFilteredTodos(filteredTodos);
+    };
 
     return (
-        <Box bg={useColorModeValue("white", "gray.700")} h="91vh">
+        <Box bg={useColorModeValue("white", "gray.700")} minH="91vh">
             <Container maxW={"7xl"} py={16} as={Stack} spacing={12}>
                 {isLoading ? (
                     <Stack spacing={0} align={"center"}>
@@ -119,9 +166,8 @@ const Todo = () => {
                     </Stack>
                 )}
             </Container>
-            {/* <Divider /> */}
             <Box
-                w="70%"
+                w="80%"
                 m="auto"
                 boxShadow="md"
                 rounded="2xl"
@@ -133,7 +179,7 @@ const Todo = () => {
                     my="4">
                     <Box w="60%" m="auto">
                         <Flex justifyContent="space-between">
-                            <HStack>
+                            <Flex justifyContent="space-between" minW="40%">
                                 <Tag
                                     size="lg"
                                     boxShadow="md"
@@ -156,22 +202,52 @@ const Todo = () => {
                                     variant="subtle">
                                     <TagLabel>Completed</TagLabel>
                                 </Tag>
-                            </HStack>
-                            <IconButton
-                                boxShadow="md"
-                                rounded="full"
-                                colorScheme="green"
-                                onClick={() => setIsModal(true)}
-                                icon={<AddIcon />}
-                            />
+                            </Flex>
+
+                            <Flex
+                                spacing={2}
+                                display={{ base: "none", md: "flex" }}
+                                justifyContent="space-between"
+                                minW="45%">
+                                <Input
+                                    w="70%"
+                                    type="search"
+                                    placeholder="Search here"
+                                    transition="all .3s ease-in-out"
+                                    boxShadow="md"
+                                    rounded="2xl"
+                                    bg={useColorModeValue("white", "gray.700")}
+                                    _focusVisible={{
+                                        outline: "none",
+                                    }}
+                                    value={search}
+                                    onChange={handleChange}
+                                    onKeyPress={handleKeyPress}
+                                />
+                                <Tooltip
+                                    hasArrow
+                                    label="New Todo"
+                                    bg="white"
+                                    color="#323234">
+                                    <IconButton
+                                        boxShadow="md"
+                                        rounded="full"
+                                        colorScheme="green"
+                                        onClick={() => setIsModal(true)}
+                                        icon={<AddIcon />}
+                                    />
+                                </Tooltip>
+                            </Flex>
                         </Flex>
                         {isModal && (
                             <AddModal
                                 isModal={isModal}
                                 setIsModal={setIsModal}
+                                onAddTodo={handleAddTodo}
                             />
                         )}
-                        {todos.map((ele) => (
+
+                        {todosToDisplay.map((ele) => (
                             <TodoCard
                                 key={ele.id}
                                 id={ele.id}

@@ -1,11 +1,23 @@
-import { Box, Button, Badge, Heading, HStack, Flex } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Badge,
+    Heading,
+    HStack,
+    Flex,
+    useColorModeValue,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import Alert from "./Alert";
 import { CheckCircleIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import UpdateModal from "./Modals/EditModal";
+
 
 export default function TodoCard({ id, title, status, onDelete, onChange }) {
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [currentStatus, setCurrentStatus] = useState(status);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [updatedTitle, setUpdatedTitle] = useState(title);
 
     const handleDelete = () => {
         setIsAlertOpen(true);
@@ -20,6 +32,27 @@ export default function TodoCard({ id, title, status, onDelete, onChange }) {
         setIsAlertOpen(false);
     };
 
+    const handleEdit = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleUpdate = () => {
+        const updatedTodo = {
+            ...JSON.parse(localStorage.getItem("todos")).find(
+                (todo) => todo.id === id
+            ),
+            title: updatedTitle,
+        };
+
+        const updatedTodos = JSON.parse(localStorage.getItem("todos")).map(
+            (todo) => (todo.id === id ? updatedTodo : todo)
+        );
+
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
+        setIsModalOpen(false);
+    };
+
     const handleComplete = () => {
         setCurrentStatus("completed");
         onChange(id);
@@ -31,7 +64,7 @@ export default function TodoCard({ id, title, status, onDelete, onChange }) {
                 key={id}
                 position="relative"
                 w="full"
-                bg="white"
+                bg={useColorModeValue("white", "gray.700")}
                 boxShadow="md"
                 rounded="2xl"
                 mt={12}
@@ -76,6 +109,8 @@ export default function TodoCard({ id, title, status, onDelete, onChange }) {
                         fontSize="sm"
                         rounded="full"
                         bg="gray.200"
+                        color={"#0d0d0d"}
+                        onClick={handleEdit}
                         leftIcon={<EditIcon />}
                         _hover={{
                             bg: "gray.300",
@@ -139,6 +174,16 @@ export default function TodoCard({ id, title, status, onDelete, onChange }) {
                     onConfirm={handleConfirmDelete}
                     title={title}
                     onCancel={handleCancelDelete}
+                />
+            )}
+            {isModalOpen && (
+                <UpdateModal
+                    isModal={isModalOpen}
+                    setIsModal={setIsModalOpen}
+                    title={title}
+                    updatedTitle={updatedTitle}
+                    setUpdatedTitle={setUpdatedTitle}
+                    handleUpdate={handleUpdate}
                 />
             )}
         </>
