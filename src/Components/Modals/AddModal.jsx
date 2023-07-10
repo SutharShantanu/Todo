@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
 import {
     Button,
     Divider,
+    Flex,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -15,6 +17,8 @@ import {
     ModalHeader,
     ModalOverlay,
     Spinner,
+    Text,
+    useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
@@ -80,8 +84,6 @@ const AddModal = ({ isModal, setIsModal, onAddTodo }) => {
         }
     };
 
-
-
     const handleClose = () => {
         setIsModal(false);
     };
@@ -102,20 +104,34 @@ const AddModal = ({ isModal, setIsModal, onAddTodo }) => {
                 <ModalCloseButton />
                 <ModalBody>
                     <FormControl>
-                        <FormLabel>Creating a Todo</FormLabel>
+                        <Flex justifyContent="space-between">
+                            <FormLabel>Creating a Todo</FormLabel>
+                            <Text
+                                m="auto 0 auto auto"
+                                color="gray"
+                                fontSize="xs"
+                                as="i">
+                                Max Char. 15
+                            </Text>
+                        </Flex>
                         <InputGroup>
                             <InputLeftElement pointerEvents="none">
-                                <PiTextTLight color="gray.300" />
+                                <PiTextTLight
+                                    color="gray.300"
+                                    fontWeight="bold"
+                                />
                             </InputLeftElement>
                             <Input
                                 variant="outline"
                                 type="text"
                                 placeholder="Todo title"
+                                _focusVisible={{ outline: "none" }}
+                                maxLength={15}
                                 onChange={handleChange}
                                 value={title}
                             />
                         </InputGroup>
-                        <FormHelperText fontStyle="italic">
+                        <FormHelperText fontStyle="italic" color="gray">
                             {title === "" ? `Your title will show here` : title}
                         </FormHelperText>
                     </FormControl>
@@ -134,14 +150,15 @@ const AddModal = ({ isModal, setIsModal, onAddTodo }) => {
                         isLoading={isAdding}
                         loadingText="Adding"
                         spinner={<Spinner color="#323234" size="xs" />}
-                        isDisabled={isAdding}>
+                        isDisabled={title === ""}>
                         Add
                     </Button>
                     <Button
                         fontWeight="normal"
                         variant="ghost"
                         rounded="2xl"
-                        onClick={handleClose}>
+                        onClick={handleClose}
+                        isDisabled={isAdding}>
                         Cancel
                     </Button>
                 </ModalFooter>

@@ -1,6 +1,7 @@
 import {
     Button,
     Divider,
+    Flex,
     FormControl,
     FormHelperText,
     FormLabel,
@@ -15,6 +16,7 @@ import {
     ModalHeader,
     ModalOverlay,
     Spinner,
+    Text,
     useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -74,15 +76,26 @@ const UpdateModal = ({
                 <ModalCloseButton />
                 <ModalBody>
                     <FormControl>
-                        <FormLabel>Updating a Todo Title</FormLabel>
+                        <Flex justifyContent="space-between">
+                            <FormLabel>New Todo Title</FormLabel>
+                            <Text
+                                m="auto 0 auto auto"
+                                color="gray"
+                                fontSize="xs"
+                                as="i">
+                                Max Char. 15
+                            </Text>
+                        </Flex>
                         <InputGroup>
                             <InputLeftElement pointerEvents="none">
-                                <EditIcon color="gray.300" />
+                                <EditIcon color="gray.300" fontWeight="bold" />
                             </InputLeftElement>
                             <Input
                                 variant="outline"
                                 type="text"
                                 placeholder="Todo title"
+                                _focusVisible={{ outline: "none" }}
+                                maxLength={15}
                                 onChange={handleChange}
                                 value={updatedTitle}
                             />

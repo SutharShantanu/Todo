@@ -1,12 +1,12 @@
 import Navbar from "./Components/Navbar";
-import AllRoute from "./Routes/AllRoute";
 import Footer from "./Components/Footer";
+import Wrapper from "./Routes/Wrapper";
 
 function App() {
     return (
         <div className="App">
             <Navbar />
-            <AllRoute />
+            <Wrapper />
             {/* <Footer /> */}
         </div>
     );

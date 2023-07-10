@@ -5,12 +5,9 @@ import {
     HStack,
     IconButton,
     Button,
-    useDisclosure,
     useColorModeValue,
-    Stack,
     Tooltip,
     useColorMode,
-    Collapse,
     Image,
     MenuButton,
     Menu,
@@ -20,8 +17,6 @@ import {
 import {
     MoonIcon,
     SunIcon,
-    HamburgerIcon,
-    CloseIcon,
     AddIcon,
     QuestionIcon,
     SettingsIcon,
@@ -31,31 +26,45 @@ import { Link as ReactLink } from "react-router-dom";
 import Light from "../Utilis/Light.png";
 import Dark from "../Utilis/Dark.png";
 import TuneModal from "./Modals/TuneModal";
+import AddModal from "./Modals/AddModal";
 
 export default function Navbar() {
-    const { isOpen, onToggle } = useDisclosure();
     const [isModal, setIsModal] = useState(false);
     const { colorMode, toggleColorMode } = useColorMode();
     const logo = colorMode === "light" ? Light : Dark;
+    const [todos, setTodos] = useState([]);
+    const [filteredTodos, setFilteredTodos] = useState([]);
+
+
+
+
+    const handleAddTodo = (newTodo) => {
+        setTodos((prevTodos) => {
+            const updatedTodos = [...prevTodos, newTodo];
+            localStorage.setItem("todos", JSON.stringify(updatedTodos));
+            return updatedTodos;
+        });
+
+        setFilteredTodos((prevFilteredTodos) => {
+            return [...prevFilteredTodos, newTodo];
+        });
+    };
 
     return (
         <Box
             bg={useColorModeValue("gray.100", "gray.900")}
             px={4}
+            position="fixed"
+            top="0"
+            zIndex="1000"
+            width="100vw"
             boxShadow="lg">
             <Flex h={16} alignItems="center" justifyContent="space-between">
-                <IconButton
-                    size="md"
-                    icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-                    aria-label="Open Menu"
-                    display={{ base: "block", md: "none" }}
-                    onClick={onToggle}
-                />
                 <HStack spacing={8} alignItems="center" width="30%">
                     <ReactLink to="/">
                         <Image
                             width={{ base: "40%", md: "80%", lg: "10%" }}
-                            margin={{ base: "auto", md: "0px" }}
+                            margin={{ base: "0px", md: "0px" }}
                             src={logo}
                             alt="logo"
                         />
@@ -103,15 +112,21 @@ export default function Navbar() {
                                         "whiteAlpha.400"
                                     )}`,
                                 }}
-                                aria-label="Options"
                                 icon={<CgMoreVerticalAlt />}
                                 rounded="full"
-                                // variant="outline"
                             />
-                            <MenuList>
-                                <MenuItem icon={<AddIcon />}>New Todo</MenuItem>
-                                <MenuItem icon={<QuestionIcon />}>FAQ</MenuItem>
+                            <MenuList rounded="2xl">
                                 <MenuItem
+                                    rounded="2xl"
+                                    icon={<AddIcon />}
+                                    onClick={() => setIsModal(true)}>
+                                    New Todo
+                                </MenuItem>
+                                <MenuItem rounded="2xl" icon={<QuestionIcon />}>
+                                    FAQ
+                                </MenuItem>
+                                <MenuItem
+                                    rounded="2xl"
                                     icon={<SettingsIcon />}
                                     onClick={() => setIsModal(true)}>
                                     Settings
@@ -120,18 +135,19 @@ export default function Navbar() {
                         </Menu>
                     </Tooltip>
                 </HStack>
+                {isModal && (
+                    <AddModal
+                        isModal={isModal}
+                        setIsModal={setIsModal}
+                        onAddTodo={handleAddTodo}
+                    />
+                )}
                 {isModal === true ? (
                     <TuneModal isModal={isModal} setIsModal={setIsModal} />
                 ) : (
                     ""
                 )}
             </Flex>
-
-            <Collapse in={isOpen} animateOpacity>
-                <Box pb={4} display={{ md: "none" }}>
-                    <Stack spacing={4}></Stack>
-                </Box>
-            </Collapse>
         </Box>
     );
 }

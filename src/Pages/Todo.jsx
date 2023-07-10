@@ -21,6 +21,7 @@ import React, { useEffect, useState } from "react";
 import TodoCard from "../Components/TodoCard";
 import AddModal from "../Components/Modals/AddModal";
 import { AddIcon } from "@chakra-ui/icons";
+import Charts from "../Components/Charts";
 
 const Todo = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +42,6 @@ const Todo = () => {
             return [...prevFilteredTodos, newTodo];
         });
     };
-
 
     const handleChangeStatus = (id) => {
         setTodos((ele) => {
@@ -114,6 +114,11 @@ const Todo = () => {
         setFilteredTodos(filteredTodos);
     };
 
+    const pieChartData = [
+        { name: "Pending", value: pendingTodos.length },
+        { name: "Completed", value: completedTodos.length },
+    ];
+
     return (
         <Box bg={useColorModeValue("white", "gray.700")} minH="91vh">
             <Container maxW={"7xl"} py={16} as={Stack} spacing={12}>
@@ -144,7 +149,7 @@ const Todo = () => {
                     </Stack>
                 ) : (
                     <Stack spacing={0} align={"center"}>
-                        <Heading as={"h1"} size={{ base: "xl", md: "4xl" }}>
+                        <Heading as={"h1"} size={{ base: "2xl", md: "4xl" }}>
                             Your Todos&nbsp;
                             <Highlight
                                 query={total}
@@ -158,7 +163,7 @@ const Todo = () => {
                             </Highlight>
                         </Heading>
                         <Text
-                            fontSize={{ base: "xl", md: "2xl" }}
+                            fontSize={{ base: "lg", md: "xl" }}
                             mt={2}
                             color={"gray.500"}>
                             Todo that helps to manage your life
@@ -169,15 +174,17 @@ const Todo = () => {
             <Box
                 w="80%"
                 m="auto"
+                mb={8}
                 boxShadow="md"
                 rounded="2xl"
                 py="4"
                 bg={useColorModeValue("gray.200", "gray.900")}>
-                <HStack
+                <Flex
+                    justifyContent="space-between"
                     bg={useColorModeValue("gray.200", "gray.900")}
                     spacing={8}
                     my="4">
-                    <Box w="60%" m="auto">
+                    <Box w="60%" mx="auto" mt="0">
                         <Flex justifyContent="space-between">
                             <Flex justifyContent="space-between" minW="40%">
                                 <Tag
@@ -260,14 +267,14 @@ const Todo = () => {
                     </Box>
                     <Box
                         bg={useColorModeValue("gray.200", "gray.900")}
-                        rounded={"2xl"}
-                        textAlign="center"
-                        w="30%"
-                        h="100%"
-                        m="auto">
-                        Chart
+                        w="35%"
+                        mx="auto">
+                        <Heading as="h3" size="lg" textAlign="center">
+                            Stats
+                        </Heading>
+                        <Charts data={pieChartData} />
                     </Box>
-                </HStack>
+                </Flex>
             </Box>
         </Box>
     );

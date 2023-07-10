@@ -134,7 +134,7 @@ export default function TodoCard({ id, title, status, onDelete, onChange }) {
                         color="white"
                         onClick={handleDelete}
                         leftIcon={<DeleteIcon />}
-                        boxShadow="0px 1px 25px -5px rgb(225 6666 / 48%), 0 10px 10px -5px rgb(225 66 66 / 43%)"
+                        boxShadow="0px 1px 25px -5px rgb(225 66 66 / 48%), 0 10px 10px -5px rgb(225 66 66 / 43%)"
                         _hover={{
                             bg: "red.500",
                         }}
