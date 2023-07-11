@@ -63,13 +63,14 @@ export default function Navbar() {
                 <HStack spacing={8} alignItems="center" width="30%">
                     <ReactLink to="/">
                         <Image
-                            width={{ base: "40%", md: "80%", lg: "10%" }}
+                            style={{ width: "50px", height: "50px" }}
                             margin={{ base: "0px", md: "0px" }}
                             src={logo}
                             alt="logo"
                         />
                     </ReactLink>
                 </HStack>
+
                 <HStack></HStack>
                 <HStack
                     width={{ base: "10%", md: "30%" }}

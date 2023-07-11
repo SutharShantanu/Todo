@@ -91,7 +91,7 @@ const AddModal = ({ isModal, setIsModal, onAddTodo }) => {
     return (
         <Modal
             isCentered
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             height="40vh"
             isOpen={isModal}
             onClose={handleClose}
