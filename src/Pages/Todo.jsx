@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import React, { useEffect, useState } from "react";
 import {
     Box,
     Container,
     Flex,
-    HStack,
     Heading,
     Highlight,
     IconButton,
@@ -17,7 +17,6 @@ import {
     useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
 import TodoCard from "../Components/TodoCard";
 import AddModal from "../Components/Modals/AddModal";
 import { AddIcon } from "@chakra-ui/icons";
@@ -29,6 +28,7 @@ const Todo = () => {
     const [todos, setTodos] = useState([]);
     const [search, setSearch] = useState("");
     const [filteredTodos, setFilteredTodos] = useState([]);
+    const [selectedFilter, setSelectedFilter] = useState("all"); // State for selected filter
     const toast = useToast();
 
     const handleAddTodo = (newTodo) => {
@@ -89,6 +89,28 @@ const Todo = () => {
         );
         setFilteredTodos(filteredTodos);
     }, [search, todos]);
+
+    const handleFilter = (filter) => {
+        setSelectedFilter(filter);
+
+        switch (filter) {
+            case "all":
+                setFilteredTodos(todos);
+                break;
+            case "pending":
+                setFilteredTodos(
+                    todos.filter((todo) => todo.status === "pending")
+                );
+                break;
+            case "completed":
+                setFilteredTodos(
+                    todos.filter((todo) => todo.status === "completed")
+                );
+                break;
+            default:
+                setFilteredTodos(todos);
+        }
+    };
 
     const pendingTodos = todos.filter((todo) => todo.status === "pending");
     const completedTodos = todos.filter((todo) => todo.status === "completed");
@@ -181,41 +203,72 @@ const Todo = () => {
                 bg={useColorModeValue("gray.200", "gray.900")}>
                 <Flex
                     justifyContent="space-between"
+                    flexDirection={{ base: "column", md: "row" }}
                     bg={useColorModeValue("gray.200", "gray.900")}
+                    // border="1px solid red"
                     spacing={8}
                     my="4">
-                    <Box w="60%" mx="auto" mt="0">
-                        <Flex justifyContent="space-between">
-                            <Flex justifyContent="space-between" minW="40%">
+                    <Box
+                        w={{ base: "90%", md: "60%" }}
+                        mx="auto"
+                        mt="0"
+                        // border="1px solid green"
+                    >
+                        <Flex
+                            justifyContent="space-between"
+                            flexDirection={{ base: "column", md: "row" }}
+                            // border="1px solid brown"
+                        >
+                            <Flex
+                                justifyContent="space-between"
+                                w={{ base: "100%", md: "40%" }}>
                                 <Tag
                                     size="lg"
                                     boxShadow="md"
-                                    variant="subtle"
                                     borderRadius="full"
-                                    colorScheme="green">
+                                    colorScheme={
+                                        selectedFilter === "all"
+                                            ? "green"
+                                            : undefined
+                                    }
+                                    cursor="pointer"
+                                    onClick={() => handleFilter("all")}>
                                     <TagLabel>All</TagLabel>
                                 </Tag>
                                 <Tag
                                     size="lg"
                                     borderRadius="full"
                                     boxShadow="md"
-                                    variant="subtle">
+                                    colorScheme={
+                                        selectedFilter === "pending"
+                                            ? "green"
+                                            : undefined
+                                    }
+                                    cursor="pointer"
+                                    onClick={() => handleFilter("pending")}>
                                     <TagLabel>Pending</TagLabel>
                                 </Tag>
                                 <Tag
                                     size="lg"
                                     borderRadius="full"
                                     boxShadow="md"
-                                    variant="subtle">
+                                    colorScheme={
+                                        selectedFilter === "completed"
+                                            ? "green"
+                                            : undefined
+                                    }
+                                    cursor="pointer"
+                                    onClick={() => handleFilter("completed")}>
                                     <TagLabel>Completed</TagLabel>
                                 </Tag>
                             </Flex>
 
                             <Flex
                                 spacing={2}
-                                display={{ base: "none", md: "flex" }}
+                                mt={{ base: 4, md: 0 }}
                                 justifyContent="space-between"
-                                minW="45%">
+                                // border="1px solid brown"
+                                w={{ base: "100%", md: "45%" }}>
                                 <Input
                                     w="70%"
                                     type="search"
@@ -267,7 +320,7 @@ const Todo = () => {
                     </Box>
                     <Box
                         bg={useColorModeValue("gray.200", "gray.900")}
-                        w="35%"
+                        w={{ base: "100%", md: "35%" }}
                         mx="auto">
                         <Heading as="h3" size="lg" textAlign="center">
                             Stats

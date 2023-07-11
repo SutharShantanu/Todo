@@ -46,7 +46,7 @@ const Charts = ({ data }) => {
                                 fill={
                                     entry.name === "Pending"
                                         ? "#f56565"
-                                        : "#c6f6d5"
+                                        : "#38a169"
                                 }
                             />
                         ))}
