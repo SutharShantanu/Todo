@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+import React, { useState } from "react";
 import {
     Button,
     Divider,
@@ -5,6 +7,7 @@ import {
     FormControl,
     FormHelperText,
     FormLabel,
+    useColorModeValue,
     Input,
     InputGroup,
     InputLeftElement,
@@ -19,33 +22,24 @@ import {
     Text,
     useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
+import { useDispatch } from "react-redux";
+import { updateTodos } from "../../Redux/Todo/Action";
 
-const UpdateModal = ({
-    isModal,
-    setIsModal,
-    updatedTitle,
-    setUpdatedTitle,
-    handleUpdate,
-}) => {
+const UpdateModal = ({ isOpen, onClose: closeModal, title, id }) => {
+    const [updatedTitle, setUpdatedTitle] = useState(title);
     const [isUpdating, setIsUpdating] = useState(false);
+    const dispatch = useDispatch();
     const toast = useToast();
 
     const handleChange = (e) => {
         setUpdatedTitle(e.target.value);
     };
 
-    const handleClose = () => {
-        setIsModal(false);
-    };
-
-    const handleSave = () => {
+    const handleSaveClick = () => {
         setIsUpdating(true);
-
         setTimeout(() => {
-            handleUpdate();
-
+            dispatch(updateTodos(updatedTitle, id));
             toast({
                 title: "Todo updated successfully.",
                 description: "",
@@ -54,8 +48,7 @@ const UpdateModal = ({
                 position: "top",
                 isClosable: true,
             });
-
-            setIsModal(false);
+            closeModal();
             setIsUpdating(false);
         }, 2000);
     };
@@ -63,10 +56,10 @@ const UpdateModal = ({
     return (
         <Modal
             isCentered
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             height="40vh"
-            isOpen={isModal}
-            onClose={handleClose}
+            isOpen={isOpen}
+            onClose={closeModal}
             scrollBehavior="inside"
             motionPreset="slideInBottom">
             <ModalOverlay backdropFilter="blur(5px)" />
@@ -102,7 +95,7 @@ const UpdateModal = ({
                         </InputGroup>
                         <FormHelperText fontStyle="italic">
                             {updatedTitle === ""
-                                ? `Your title will show here`
+                                ? "Your title will show here"
                                 : updatedTitle}
                         </FormHelperText>
                     </FormControl>
@@ -117,10 +110,15 @@ const UpdateModal = ({
                         colorScheme="green"
                         fontWeight="normal"
                         rounded="2xl"
-                        onClick={handleSave}
+                        onClick={handleSaveClick}
                         isLoading={isUpdating}
                         loadingText="Updating"
-                        spinner={<Spinner color="#323234" size="xs" />}
+                        spinner={
+                            <Spinner
+                                color={useColorModeValue("black", "white")}
+                                size="xs"
+                            />
+                        }
                         isDisabled={updatedTitle === ""}>
                         Update
                     </Button>
@@ -128,7 +126,7 @@ const UpdateModal = ({
                         fontWeight="normal"
                         variant="ghost"
                         rounded="2xl"
-                        onClick={handleClose}
+                        onClick={closeModal}
                         isDisabled={isUpdating}>
                         Cancel
                     </Button>

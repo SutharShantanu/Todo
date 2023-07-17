@@ -1,4 +1,6 @@
 /* eslint-disable no-undef */
+import React, { useState } from "react";
+import {  useDispatch } from "react-redux";
 import {
     Button,
     Divider,
@@ -7,6 +9,7 @@ import {
     FormHelperText,
     FormLabel,
     Input,
+    useColorModeValue,
     InputGroup,
     InputLeftElement,
     Modal,
@@ -18,74 +21,78 @@ import {
     ModalOverlay,
     Spinner,
     Text,
-    useColorModeValue,
     useToast,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
 import { PiTextTLight } from "react-icons/pi";
+import { addTodo } from "../../Redux/Todo/Action";
 
-let idCounter = null;
-
-const AddModal = ({ isModal, setIsModal, onAddTodo }) => {
+const AddModal = ({ isOpen, onClose }) => {
     const [title, setTitle] = useState("");
-    const [isAdding, setIsAdding] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const dispatch = useDispatch();
+    const todos = JSON.parse(localStorage.getItem("todos")) || [];
     const toast = useToast();
 
-    useEffect(() => {
-        const existingTodos = JSON.parse(localStorage.getItem("todos")) || [];
-        if (existingTodos.length > 0) {
-            const lastTodo = existingTodos[existingTodos.length - 1];
-            idCounter = lastTodo.id + 1;
-        } else {
-            idCounter = 0;
-        }
-    }, []);
-
     const handleChange = (e) => {
-        const capitalizedTitle = e.target.value.replace(/^\w/, (c) =>
-            c.toUpperCase()
-        );
-        setTitle(capitalizedTitle);
+        setTitle(e.target.value);
     };
 
     const handleAdd = () => {
-        if (title !== "") {
-            setIsAdding(true);
-            setTimeout(() => {
-                const todoData = {
-                    id: idCounter++,
-                    title: title,
-                    status: "pending",
-                };
-                onAddTodo(todoData);
-                setIsAdding(false);
-                toast({
-                    title: "Todo added to list",
-                    description: "",
-                    status: "success",
-                    variant: "solid",
-                    duration: 2000,
-                    isClosable: true,
-                    position: "top",
-                });
-                setTitle("");
-                handleClose();
-            }, 2000);
-        } else {
+        if (title.trim() === "") {
             toast({
-                title: "Please fill the input field",
-                status: "warning",
-                variant: "left-accent",
+                title: "Title is required",
+                description: "",
+                status: "error",
                 duration: 2000,
-                isClosable: true,
                 position: "top",
+                isClosable: true,
             });
             return;
         }
+
+        setIsLoading(true);
+
+        const newTodo = {
+            id: generateTodoId(todos),
+            title: title,
+            status: "pending",
+        };
+        setTimeout(() => {
+            try {
+                dispatch(addTodo(newTodo));
+                toast({
+                    title: "Todo created successfully",
+                    description: "",
+                    status: "success",
+                    duration: 2000,
+                    position: "top",
+                    isClosable: true,
+                });
+
+                setTitle("");
+                onClose();
+            } catch (error) {
+                toast({
+                    title: "Failed to add todo",
+                    description: ``,
+                    status: "error",
+                    duration: 2000,
+                    position: "top",
+                    isClosable: true,
+                });
+            }
+
+            setIsLoading(false);
+        }, 2000);
     };
 
-    const handleClose = () => {
-        setIsModal(false);
+    const generateTodoId = (data) => {
+        if (!data || data.length === 0) {
+            return 1;
+        } else {
+            let lastId = data[data.length - 1].id;
+            return lastId + 1;
+        }
     };
 
     return (
@@ -93,8 +100,8 @@ const AddModal = ({ isModal, setIsModal, onAddTodo }) => {
             isCentered
             size={{ base: "xs", md: "sm" }}
             height="40vh"
-            isOpen={isModal}
-            onClose={handleClose}
+            isOpen={isOpen}
+            onClose={onClose}
             scrollBehavior="inside"
             motionPreset="slideInBottom">
             <ModalOverlay backdropFilter="blur(5px)" />
@@ -147,18 +154,22 @@ const AddModal = ({ isModal, setIsModal, onAddTodo }) => {
                         fontWeight="normal"
                         rounded="2xl"
                         onClick={handleAdd}
-                        isLoading={isAdding}
+                        isLoading={isLoading}
+                        isDisabled={title.trim() === ""}
                         loadingText="Adding"
-                        spinner={<Spinner color="#323234" size="xs" />}
-                        isDisabled={title === ""}>
+                        spinner={
+                            <Spinner
+                                color={useColorModeValue("black", "white")}
+                                size="xs"
+                            />
+                        }>
                         Add
                     </Button>
                     <Button
                         fontWeight="normal"
                         variant="ghost"
                         rounded="2xl"
-                        onClick={handleClose}
-                        isDisabled={isAdding}>
+                        onClick={onClose}>
                         Cancel
                     </Button>
                 </ModalFooter>

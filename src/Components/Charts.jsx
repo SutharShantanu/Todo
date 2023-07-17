@@ -1,60 +1,34 @@
 import React from "react";
-import {
-    PieChart,
-    Pie,
-    Legend,
-    Tooltip,
-    Cell,
-    ResponsiveContainer,
-} from "recharts";
+import { VictoryPie, VictoryLabel } from "victory";
+import { useColorModeValue } from "@chakra-ui/react";
 
 const Charts = ({ data }) => {
-    const pieChartStyle = {
-        border: "none",
-    };
+    const chartData = [
+        { x: "Pending", y: data.values[0] },
+        { x: "Completed", y: data.values[1] },
+    ];
 
-    const legendStyle = {
-        fontSize: "12px",
-        margin: "auto",
-    };
+    const labelColor = useColorModeValue("black", "white");
 
-    const tooltipStyle = {
-        backdropFilter: "blur(5px) saturate(30%)",
-        backgroundColor: "initial",
-        color: "gray",
-        border: "none",
-        borderRadius: "50px",
-        padding: "3px 10px",
-        fontSize: "12px",
+    const labelStyle = {
+        fill: labelColor,
     };
 
     return (
-        <div style={{ width: "100%", height: "89%", boxSizing: "border-box" }}>
-            <ResponsiveContainer>
-                <PieChart style={pieChartStyle}>
-                    <Pie
-                        dataKey="value"
-                        data={data}
-                        cx={190}
-                        cy={150}
-                        isAnimationActive={true}
-                        outerRadius={100}
-                        label>
-                        {data.map((entry, index) => (
-                            <Cell
-                                key={`cell-${index}`}
-                                fill={
-                                    entry.name === "Pending"
-                                        ? "#f56565"
-                                        : "#38a169"
-                                }
-                            />
-                        ))}
-                    </Pie>
-                    <Tooltip contentStyle={tooltipStyle} />
-                    <Legend wrapperStyle={legendStyle} />
-                </PieChart>
-            </ResponsiveContainer>
+        <div>
+            <VictoryPie
+                data={chartData}
+                animate={{
+                    duration: 2000,
+                }}
+                padAngle={2}
+                cornerRadius={10}
+                innerRadius={2}
+                labelPosition="endAngle"
+                radius={120}
+                colorScale={["#F56565", "#4299e1"]}
+                labelComponent={<VictoryLabel style={labelStyle} />}
+            />
         </div>
     );
 };

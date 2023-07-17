@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+import React, { useState } from "react";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -7,38 +9,34 @@ import {
     AlertDialogOverlay,
     AlertDialogCloseButton,
     Button,
+    useColorModeValue,
     Spinner,
     Highlight,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteTodos } from "../Redux/Todo/Action";
 
-const Alert = ({ isOpen, onConfirm, onCancel, title }) => {
+const Alert = ({ isAlert, setIsAlert, title, id }) => {
     const [isLoading, setIsLoading] = useState(false);
-
-    const cancelRef = useRef();
+    const dispatch = useDispatch();
 
     const handleDelete = () => {
         setIsLoading(true);
         setTimeout(() => {
-            onConfirm();
+            dispatch(deleteTodos(id));
             setIsLoading(false);
         }, 2000);
-    };
-
-    const handleClose = () => {
-        onCancel();
     };
 
     return (
         <>
             <AlertDialog
                 motionPreset="slideInBottom"
-                leastDestructiveRef={cancelRef}
-                isOpen={isOpen}
-                onClose={handleClose}
+                size={{ base: "xs", md: "sm" }}
+                isOpen={isAlert}
+                onClose={() => setIsAlert(false)}
                 isCentered>
                 <AlertDialogOverlay backdropFilter="blur(5px)" />
-
                 <AlertDialogContent rounded="2xl">
                     <AlertDialogHeader>Discard Changes?</AlertDialogHeader>
                     <AlertDialogCloseButton />
@@ -61,13 +59,11 @@ const Alert = ({ isOpen, onConfirm, onCancel, title }) => {
 
                     <AlertDialogFooter>
                         <Button
-                            ref={cancelRef}
                             fontWeight="normal"
                             variant="solid"
                             rounded="2xl"
-                            onClick={handleClose}
-                            isDisabled={isLoading} 
-                        >
+                            onClick={() => setIsAlert(false)}
+                            isDisabled={isLoading}>
                             No
                         </Button>
                         <Button
@@ -79,7 +75,12 @@ const Alert = ({ isOpen, onConfirm, onCancel, title }) => {
                             onClick={handleDelete}
                             isLoading={isLoading}
                             loadingText="Deleting"
-                            spinner={<Spinner color="#323234" size="xs" />}>
+                            spinner={
+                                <Spinner
+                                    color={useColorModeValue("black", "white")}
+                                    size="xs"
+                                />
+                            }>
                             Yes
                         </Button>
                     </AlertDialogFooter>

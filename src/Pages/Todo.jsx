@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
     Box,
     Container,
@@ -15,131 +16,57 @@ import {
     Text,
     Tooltip,
     useColorModeValue,
-    useToast,
+    useDisclosure,
 } from "@chakra-ui/react";
 import TodoCard from "../Components/TodoCard";
 import AddModal from "../Components/Modals/AddModal";
 import { AddIcon } from "@chakra-ui/icons";
+import { getTodo } from "../Redux/Todo/Action";
 import Charts from "../Components/Charts";
 
 const Todo = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [isModal, setIsModal] = useState(false);
-    const [todos, setTodos] = useState([]);
-    const [search, setSearch] = useState("");
-    const [filteredTodos, setFilteredTodos] = useState([]);
-    const [selectedFilter, setSelectedFilter] = useState("all"); // State for selected filter
-    const toast = useToast();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [isLoading, setIsLoading] = useState(false);
+    const { todo } = useSelector((state) => state.TodoReducer);
+    console.log(todo);
+    const dispatch = useDispatch();
+    const [selectedTag, setSelectedTag] = useState("all");
 
-    const handleAddTodo = (newTodo) => {
-        setTodos((prevTodos) => {
-            const updatedTodos = [...prevTodos, newTodo];
-            localStorage.setItem("todos", JSON.stringify(updatedTodos));
-            return updatedTodos;
-        });
+    let length = todo ? todo.length.toString() : "0";
 
-        setFilteredTodos((prevFilteredTodos) => {
-            return [...prevFilteredTodos, newTodo];
-        });
-    };
-
-    const handleChangeStatus = (id) => {
-        setTodos((ele) => {
-            const updatedTodos = ele.map((todo) => {
-                if (todo.id === id) {
-                    return { ...todo, status: "completed" };
-                }
-                return todo;
-            });
-
-            localStorage.setItem("todos", JSON.stringify(updatedTodos));
-            return updatedTodos;
-        });
-    };
-
-    const handleDeleteTodo = (id, title) => {
+    useEffect(() => {
         setIsLoading(true);
         setTimeout(() => {
-            const updatedTodos = todos.filter((todo) => todo.id !== id);
-            setTodos(updatedTodos);
-            localStorage.setItem("todos", JSON.stringify(updatedTodos));
-            toast({
-                title: `${title} has been deleted.`,
-                description: "",
-                status: "error",
-                duration: 2000,
-                position: "top",
-                isClosable: true,
-            });
+            dispatch(getTodo());
             setIsLoading(false);
         }, 2000);
-    };
+    }, [dispatch]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            const storedTodos = JSON.parse(localStorage.getItem("todos")) || [];
-            setTodos(storedTodos);
-            setIsLoading(false);
-        }, 2000);
-    }, []);
-
-    useEffect(() => {
-        const filteredTodos = todos.filter((todo) =>
-            todo.title.toLowerCase().includes(search.toLowerCase())
-        );
-        setFilteredTodos(filteredTodos);
-    }, [search, todos]);
-
-    const handleFilter = (filter) => {
-        setSelectedFilter(filter);
-
-        switch (filter) {
-            case "all":
-                setFilteredTodos(todos);
-                break;
-            case "pending":
-                setFilteredTodos(
-                    todos.filter((todo) => todo.status === "pending")
-                );
-                break;
-            case "completed":
-                setFilteredTodos(
-                    todos.filter((todo) => todo.status === "completed")
-                );
-                break;
-            default:
-                setFilteredTodos(todos);
+    const filteredTodo = todo.filter((item) => {
+        if (selectedTag === "all") {
+            return true;
+        } else if (selectedTag === "pending") {
+            return item.status === "pending";
+        } else if (selectedTag === "completed") {
+            return item.status === "completed";
         }
+        return false;
+    });
+
+    const handleTagClick = (tag) => {
+        setSelectedTag(tag);
     };
 
-    const pendingTodos = todos.filter((todo) => todo.status === "pending");
-    const completedTodos = todos.filter((todo) => todo.status === "completed");
-    const total = pendingTodos.length.toString();
+    const pendingTodo = todo.filter((ele) => ele.status === "pending").length;
 
-    const sortedTodos = [...pendingTodos, ...completedTodos];
-    const todosToDisplay = filteredTodos.length ? filteredTodos : sortedTodos;
+    const completedTodo = todo.filter(
+        (ele) => ele.status === "completed"
+    ).length;
+    console.log(pendingTodo, completedTodo);
 
-    const handleChange = (e) => {
-        setSearch(e.target.value);
+    const pieData = {
+        values: [pendingTodo, completedTodo],
     };
-
-    const handleKeyPress = (e) => {
-        if (e.key === "Enter") {
-            handleSearch();
-        }
-    };
-
-    const handleSearch = () => {
-        const filteredTodos = todos.filter((todo) =>
-            todo.title.toLowerCase().includes(search.toLowerCase())
-        );
-        setFilteredTodos(filteredTodos);
-    };
-
-    const pieChartData = [
-        { name: "Pending", value: pendingTodos.length },
-        { name: "Completed", value: completedTodos.length },
-    ];
 
     return (
         <Box bg={useColorModeValue("white", "gray.700")} minH="91vh">
@@ -174,14 +101,14 @@ const Todo = () => {
                         <Heading as={"h1"} size={{ base: "2xl", md: "4xl" }}>
                             Your Todos&nbsp;
                             <Highlight
-                                query={total}
+                                query={length}
                                 styles={{
                                     px: "2",
                                     py: "1",
                                     rounded: "2xl",
                                     bg: "orange.200",
                                 }}>
-                                {total}
+                                {length}
                             </Highlight>
                         </Heading>
                         <Text
@@ -205,69 +132,59 @@ const Todo = () => {
                     justifyContent="space-between"
                     flexDirection={{ base: "column", md: "row" }}
                     bg={useColorModeValue("gray.200", "gray.900")}
-                    // border="1px solid red"
                     spacing={8}
                     my="4">
-                    <Box
-                        w={{ base: "90%", md: "60%" }}
-                        mx="auto"
-                        mt="0"
-                        // border="1px solid green"
-                    >
+                    <Box w={{ base: "90%", md: "60%" }} mx="auto" mt="0">
                         <Flex
                             justifyContent="space-between"
-                            flexDirection={{ base: "column", md: "row" }}
-                            // border="1px solid brown"
-                        >
+                            flexDirection={{ base: "column", md: "row" }}>
                             <Flex
                                 justifyContent="space-between"
                                 w={{ base: "100%", md: "40%" }}>
                                 <Tag
-                                    size="lg"
+                                    size={{ base: "md", md: "lg" }}
                                     boxShadow="md"
                                     borderRadius="full"
                                     colorScheme={
-                                        selectedFilter === "all"
+                                        selectedTag === "all"
                                             ? "green"
                                             : undefined
                                     }
                                     cursor="pointer"
-                                    onClick={() => handleFilter("all")}>
+                                    onClick={() => handleTagClick("all")}>
                                     <TagLabel>All</TagLabel>
                                 </Tag>
                                 <Tag
-                                    size="lg"
+                                    size={{ base: "md", md: "lg" }}
                                     borderRadius="full"
                                     boxShadow="md"
                                     colorScheme={
-                                        selectedFilter === "pending"
+                                        selectedTag === "pending"
                                             ? "green"
                                             : undefined
                                     }
                                     cursor="pointer"
-                                    onClick={() => handleFilter("pending")}>
+                                    onClick={() => handleTagClick("pending")}>
                                     <TagLabel>Pending</TagLabel>
                                 </Tag>
                                 <Tag
-                                    size="lg"
+                                    size={{ base: "md", md: "lg" }}
                                     borderRadius="full"
                                     boxShadow="md"
                                     colorScheme={
-                                        selectedFilter === "completed"
+                                        selectedTag === "completed"
                                             ? "green"
                                             : undefined
                                     }
                                     cursor="pointer"
-                                    onClick={() => handleFilter("completed")}>
+                                    onClick={() => handleTagClick("completed")}>
                                     <TagLabel>Completed</TagLabel>
                                 </Tag>
                             </Flex>
-
                             <Flex
                                 spacing={2}
                                 mt={{ base: 4, md: 0 }}
                                 justifyContent="space-between"
-                                // border="1px solid brown"
                                 w={{ base: "100%", md: "45%" }}>
                                 <Input
                                     w="70%"
@@ -280,9 +197,6 @@ const Todo = () => {
                                     _focusVisible={{
                                         outline: "none",
                                     }}
-                                    value={search}
-                                    onChange={handleChange}
-                                    onKeyPress={handleKeyPress}
                                 />
                                 <Tooltip
                                     hasArrow
@@ -293,29 +207,17 @@ const Todo = () => {
                                         boxShadow="md"
                                         rounded="full"
                                         colorScheme="green"
-                                        onClick={() => setIsModal(true)}
+                                        onClick={onOpen}
                                         icon={<AddIcon />}
                                     />
                                 </Tooltip>
                             </Flex>
                         </Flex>
-                        {isModal && (
-                            <AddModal
-                                isModal={isModal}
-                                setIsModal={setIsModal}
-                                onAddTodo={handleAddTodo}
-                            />
+                        {isOpen && (
+                            <AddModal isOpen={isOpen} onClose={onClose} />
                         )}
-
-                        {todosToDisplay.map((ele) => (
-                            <TodoCard
-                                key={ele.id}
-                                id={ele.id}
-                                title={ele.title}
-                                status={ele.status}
-                                onDelete={handleDeleteTodo}
-                                onChange={handleChangeStatus}
-                            />
+                        {filteredTodo.map((ele) => (
+                            <TodoCard key={ele.id} {...ele} />
                         ))}
                     </Box>
                     <Box
@@ -325,7 +227,7 @@ const Todo = () => {
                         <Heading as="h3" size="lg" textAlign="center">
                             Stats
                         </Heading>
-                        <Charts data={pieChartData} />
+                        <Charts data={pieData} />
                     </Box>
                 </Flex>
             </Box>
