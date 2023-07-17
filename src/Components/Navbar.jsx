@@ -1,54 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import {
     Box,
     Flex,
     HStack,
-    IconButton,
     Button,
     useColorModeValue,
     Tooltip,
     useColorMode,
     Image,
-    MenuButton,
-    Menu,
-    MenuList,
-    MenuItem,
+    Heading,
+    Highlight,
 } from "@chakra-ui/react";
-import {
-    MoonIcon,
-    SunIcon,
-    AddIcon,
-    QuestionIcon,
-    SettingsIcon,
-} from "@chakra-ui/icons";
-import { CgMoreVerticalAlt } from "react-icons/cg";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { Link as ReactLink } from "react-router-dom";
 import Light from "../Utilis/Light.png";
 import Dark from "../Utilis/Dark.png";
-import TuneModal from "./Modals/TuneModal";
-import AddModal from "./Modals/AddModal";
 
 export default function Navbar() {
-    const [isModal, setIsModal] = useState(false);
     const { colorMode, toggleColorMode } = useColorMode();
     const logo = colorMode === "light" ? Light : Dark;
-    const [todos, setTodos] = useState([]);
-    const [filteredTodos, setFilteredTodos] = useState([]);
-
-
-
-
-    const handleAddTodo = (newTodo) => {
-        setTodos((prevTodos) => {
-            const updatedTodos = [...prevTodos, newTodo];
-            localStorage.setItem("todos", JSON.stringify(updatedTodos));
-            return updatedTodos;
-        });
-
-        setFilteredTodos((prevFilteredTodos) => {
-            return [...prevFilteredTodos, newTodo];
-        });
-    };
 
     return (
         <Box
@@ -60,10 +30,14 @@ export default function Navbar() {
             width="100vw"
             boxShadow="lg">
             <Flex h={16} alignItems="center" justifyContent="space-between">
-                <HStack spacing={8} alignItems="center" width="30%">
+                <HStack spacing={8} alignItems="center">
                     <ReactLink to="/">
                         <Image
-                            style={{ width: "50px", height: "50px" }}
+                            style={{
+                                width: "50px",
+                                height: "50px",
+                                // border: "1px solid blue",
+                            }}
                             margin={{ base: "0px", md: "0px" }}
                             src={logo}
                             alt="logo"
@@ -71,11 +45,24 @@ export default function Navbar() {
                     </ReactLink>
                 </HStack>
 
-                <HStack></HStack>
-                <HStack
-                    width={{ base: "10%", md: "30%" }}
-                    alignItems="end"
-                    justifyContent="flex-end">
+                <HStack>
+                    <Heading
+                        lineHeight="tall"
+                        color={useColorModeValue("black", "white")}
+                        fontFamily="Cinzel, serif">
+                        <Highlight
+                            query="TODO'S"
+                            styles={{
+                                px: "2",
+                                py: "1",
+                                rounded: "full",
+                                color: useColorModeValue("black", "white"),
+                            }}>
+                            TODO'S
+                        </Highlight>
+                    </Heading>
+                </HStack>
+                <HStack alignItems="end" justifyContent="flex-end">
                     <Tooltip
                         hasArrow
                         label="Switch color mode"
@@ -88,66 +75,7 @@ export default function Navbar() {
                             {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
                         </Button>
                     </Tooltip>
-
-                    <Tooltip
-                        hasArrow
-                        label="More"
-                        bg="gray.300"
-                        color="#323234">
-                        <Menu>
-                            <MenuButton
-                                as={IconButton}
-                                bg={useColorModeValue(
-                                    "gray.100",
-                                    "whiteAlpha.200"
-                                )}
-                                _hover={{
-                                    bg: `${useColorModeValue(
-                                        "gray.200",
-                                        "whiteAlpha.300"
-                                    )}`,
-                                }}
-                                _active={{
-                                    bg: `${useColorModeValue(
-                                        "gray.300",
-                                        "whiteAlpha.400"
-                                    )}`,
-                                }}
-                                icon={<CgMoreVerticalAlt />}
-                                rounded="full"
-                            />
-                            <MenuList rounded="2xl">
-                                <MenuItem
-                                    rounded="2xl"
-                                    icon={<AddIcon />}
-                                    onClick={() => setIsModal(true)}>
-                                    New Todo
-                                </MenuItem>
-                                <MenuItem rounded="2xl" icon={<QuestionIcon />}>
-                                    FAQ
-                                </MenuItem>
-                                <MenuItem
-                                    rounded="2xl"
-                                    icon={<SettingsIcon />}
-                                    onClick={() => setIsModal(true)}>
-                                    Settings
-                                </MenuItem>
-                            </MenuList>
-                        </Menu>
-                    </Tooltip>
                 </HStack>
-                {isModal && (
-                    <AddModal
-                        isModal={isModal}
-                        setIsModal={setIsModal}
-                        onAddTodo={handleAddTodo}
-                    />
-                )}
-                {isModal === true ? (
-                    <TuneModal isModal={isModal} setIsModal={setIsModal} />
-                ) : (
-                    ""
-                )}
             </Flex>
         </Box>
     );

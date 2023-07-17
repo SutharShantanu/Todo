@@ -45,7 +45,7 @@ const TodoCard = ({ id, title, status }) => {
             <Flex
                 key={id}
                 position="relative"
-                w={{ base: "100%", md: "100%" }}
+                w="100%"
                 bg={useColorModeValue("white", "gray.700")}
                 boxShadow="md"
                 rounded="2xl"
@@ -72,7 +72,7 @@ const TodoCard = ({ id, title, status }) => {
                     </Badge>
                 </Box>
                 <Flex
-                    w={{ base: "100%", md: "100%" }}
+                    w="100%"
                     flexDirection={{ base: "column", md: "row" }}
                     justifyContent="space-between">
                     <Heading
@@ -154,10 +154,7 @@ const TodoCard = ({ id, title, status }) => {
                             loadingText="Updating"
                             spinner={
                                 <Spinner
-                                    color={useColorModeValue(
-                                        "black",
-                                        "white"
-                                    )}
+                                    color={useColorModeValue("black", "white")}
                                     size="xs"
                                 />
                             }

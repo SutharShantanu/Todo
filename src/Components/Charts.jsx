@@ -9,6 +9,9 @@ const Charts = ({ data }) => {
     ];
 
     const labelColor = useColorModeValue("black", "white");
+    const labelPosition = data.values.some((value) => value === 0)
+        ? "centroid"
+        : "endAngle";
 
     const labelStyle = {
         fill: labelColor,
@@ -24,7 +27,7 @@ const Charts = ({ data }) => {
                 padAngle={2}
                 cornerRadius={10}
                 innerRadius={2}
-                labelPosition="endAngle"
+                labelPosition={labelPosition}
                 radius={120}
                 colorScale={["#F56565", "#4299e1"]}
                 labelComponent={<VictoryLabel style={labelStyle} />}

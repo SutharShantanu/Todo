@@ -155,8 +155,8 @@ const AddModal = ({ isOpen, onClose }) => {
                         rounded="2xl"
                         onClick={handleAdd}
                         isLoading={isLoading}
-                        isDisabled={title.trim() === ""}
                         loadingText="Adding"
+                        isDisabled={title.trim() === ""}
                         spinner={
                             <Spinner
                                 color={useColorModeValue("black", "white")}
@@ -169,7 +169,8 @@ const AddModal = ({ isOpen, onClose }) => {
                         fontWeight="normal"
                         variant="ghost"
                         rounded="2xl"
-                        onClick={onClose}>
+                        onClick={onClose}
+                        isDisabled={isLoading}>
                         Cancel
                     </Button>
                 </ModalFooter>
