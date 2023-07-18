@@ -32,10 +32,16 @@ const AddModal = ({ isOpen, onClose }) => {
     const dispatch = useDispatch();
     const todos = JSON.parse(localStorage.getItem("todos")) || [];
     const toast = useToast();
-
+    
     const handleChange = (e) => {
         setTitle(e.target.value);
     };
+
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            handleAdd();
+        }
+      };
 
     const handleAdd = () => {
         if (title.trim() === "") {
@@ -154,6 +160,8 @@ const AddModal = ({ isOpen, onClose }) => {
                         fontWeight="normal"
                         rounded="2xl"
                         onClick={handleAdd}
+              onKeyDown={handleKeyPress}
+
                         isLoading={isLoading}
                         loadingText="Adding"
                         isDisabled={title.trim() === ""}
