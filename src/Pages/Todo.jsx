@@ -125,8 +125,8 @@ const Todo = () => {
                         flexDirection={{ base: "column", md: "row" }}
                         bg={useColorModeValue("gray.200", "gray.900")}
                         spacing={8}
-                        // mb={20}
-                        my="4">
+                        my="4"
+                        >
                         <Box w={{ base: "90%", md: "60%" }} mx="auto" mt="0">
                             <Flex
                                 justifyContent="space-between"
