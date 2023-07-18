@@ -34,7 +34,9 @@ const AddModal = ({ isOpen, onClose }) => {
     const toast = useToast();
     
     const handleChange = (e) => {
-        setTitle(e.target.value);
+        const capitalizedTitle =
+            e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
+        setTitle(capitalizedTitle);
     };
 
     const handleKeyPress = (e) => {
