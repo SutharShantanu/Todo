@@ -11,7 +11,7 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Plus, Loader2, CircleX, Check, CircleCheck } from "lucide-react";
+import { Plus, Loader2, CircleX, CircleCheck } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addTodo } from "@/store/slices/todoSlice";
 import { Separator } from "@/components/ui/separator";
