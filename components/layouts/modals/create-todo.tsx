@@ -27,7 +27,7 @@ function capitalizeFirstWord(str: string) {
 export default function TodoCreateModal() {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
-    const [open, setOpen] = useState(false); // control dialog
+    const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -124,7 +124,7 @@ export default function TodoCreateModal() {
                     {text.length} / {MAX_LENGTH} characters
                 </p>
 
-                <DialogFooter className="flex items-center gap-1">
+                <DialogFooter className="flex flex-row justify-end items-center gap-1">
                     <Button
                         variant="outline"
                         onClick={handleCancel}

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import {
     Dialog,
     DialogContent,
@@ -47,41 +48,37 @@ export default function TodoEditModal({
     useEffect(() => {
         if (todo) {
             setText(todo.text);
-            setTimeout(() => inputRef.current?.focus(), 100);
         }
     }, [todo]);
+
+    useLayoutEffect(() => {
+        if (open) {
+            inputRef.current?.focus();
+        }
+    }, [open]);
 
     if (!todo) return null;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let rawValue = e.target.value;
-
-        if (rawValue.length > MAX_LENGTH) {
-            rawValue = rawValue.slice(0, MAX_LENGTH);
-        }
-
-        if (rawValue.length === 0) {
+        const rawValue = e.target.value.slice(0, MAX_LENGTH);
+        if (!rawValue) {
             setText("");
             return;
         }
-
-        const capitalized = rawValue.charAt(0).toUpperCase() + rawValue.slice(1);
-        setText(capitalized);
+        setText(rawValue.charAt(0).toUpperCase() + rawValue.slice(1));
     };
 
     const handleSave = async () => {
-        if (text.trim() === "") return;
-
+        if (!text.trim()) return;
         setLoading(true);
         await new Promise((r) => setTimeout(r, 500));
-
-        const formattedText = capitalizeFirstWord(text.trim());
-        onSave(todo.id, formattedText);
+        onSave(todo.id, capitalizeFirstWord(text.trim()));
         setLoading(false);
+        onClose();
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && !loading && text.trim() !== "") {
+        if (e.key === "Enter" && !loading && text.trim()) {
             e.preventDefault();
             handleSave();
         }
@@ -91,12 +88,17 @@ export default function TodoEditModal({
         }
     };
 
-
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent
+                aria-labelledby="edit-todo-title"
+                aria-describedby="edit-todo-desc"
+            >
                 <DialogHeader>
-                    <DialogTitle>Edit Todo</DialogTitle>
+                    <DialogTitle id="edit-todo-title">Edit Todo</DialogTitle>
+                    <VisuallyHidden>
+                        <DialogTitle>Edit Todo</DialogTitle>
+                    </VisuallyHidden>
                 </DialogHeader>
                 <Separator />
                 <Label htmlFor="todo-input" className="block mb-1 font-medium">
@@ -112,35 +114,38 @@ export default function TodoEditModal({
                     aria-describedby="char-count"
                     aria-label="Todo text"
                     maxLength={MAX_LENGTH}
-                    autoFocus
-                    leftIcon={<PencilLine className="text-muted-foreground pointer-events-none"
-                        aria-hidden="true"
-                        size={16}
-                        strokeWidth={1} />}
+                    leftIcon={
+                        <PencilLine
+                            className="text-muted-foreground pointer-events-none"
+                            aria-hidden="true"
+                            size={16}
+                            strokeWidth={1}
+                        />
+                    }
                 />
                 <p
                     id="char-count"
-                    className="mt-1 text-xs text-muted-foreground select-none"
+                    className="text-xs text-muted-foreground select-none"
                     aria-live="polite"
                 >
                     {text.length} / {MAX_LENGTH} characters
                 </p>
-                <DialogFooter className="flex items-center gap-1">
+                <DialogFooter className="flex flex-row justify-end items-center gap-1">
                     <Button
                         variant="secondary"
                         onClick={onClose}
                         disabled={loading}
                         type="button"
-                        className="flex items-center gap-1"
+                        className="flex items-center gap-1 w-fit"
                     >
                         <CircleX className="w-4 h-4" />
                         Cancel
                     </Button>
 
                     <Button
-                        className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1"
+                        className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-1 w-fit"
                         onClick={handleSave}
-                        disabled={loading || text.trim() === ""}
+                        disabled={loading || !text.trim()}
                         type="submit"
                     >
                         {loading ? (
@@ -154,7 +159,6 @@ export default function TodoEditModal({
                         Save
                     </Button>
                 </DialogFooter>
-
             </DialogContent>
         </Dialog>
     );

@@ -67,7 +67,6 @@ export default function TodoList({ todos }: TodoListProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [todoToEdit, setTodoToEdit] = useState<Todo | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const editButtonRef = useRef<HTMLButtonElement>(null);
 
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
 
@@ -143,7 +142,6 @@ export default function TodoList({ todos }: TodoListProps) {
                         </TooltipContent>
                     </Tooltip>
 
-                    {/* Edit Button */}
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button

@@ -33,7 +33,7 @@ export default function Navbar() {
                 </div>
 
                 <h1
-                    className="text-lg font-bold md:text-4xl font-title"
+                    className="text-2xl font-bold md:text-4xl font-title"
                     aria-label="TODO Application Title"
                 >
                     TODO

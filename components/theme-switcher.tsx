@@ -22,14 +22,14 @@ export function ThemeSwitcher() {
             className="w-fit"
         >
             <TabsList className="rounded-full p-1 h-fit">
-                <TabsTrigger value="light" className="flex items-center gap-1 rounded-full p-2 h-fit">
-                    <Sun className="h-4 w-4" />
+                <TabsTrigger value="light" className="flex items-center gap-1 rounded-full p-1 h-fit">
+                    <Sun className="h-3 w-3" />
                 </TabsTrigger>
-                <TabsTrigger value="dark" className="flex items-center gap-1 rounded-full p-2 h-fit">
-                    <Moon className="h-4 w-4" />
+                <TabsTrigger value="dark" className="flex items-center gap-1 rounded-full p-1 h-fit">
+                    <Moon className="h-3 w-3" />
                 </TabsTrigger>
-                <TabsTrigger value="system" className="flex items-center gap-1 rounded-full p-2 h-fit">
-                    <Monitor className="h-4 w-4" />
+                <TabsTrigger value="system" className="flex items-center gap-1 rounded-full p-1 h-fit">
+                    <Monitor className="h-3 w-3" />
                 </TabsTrigger>
             </TabsList>
         </Tabs>

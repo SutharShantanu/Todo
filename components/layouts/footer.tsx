@@ -5,7 +5,7 @@ import { Separator } from "../ui/separator";
 
 export default function Footer() {
     return (
-        <footer className="w-full border bg-primary-foreground border-b-0 rounded-t-xl m-auto max-w-7xl px-4 flex items-center justify-between min-h-15">
+        <footer className="w-[95%] max-w-7xl mx-auto border bg-primary-foreground border-b-0 rounded-t-xl px-4 flex items-center justify-between min-h-15">
             <div className="text-muted-foreground text-xs flex gap-2 items-center">
                 Built by Shantanu with ❤️
             </div>
