@@ -66,7 +66,7 @@ export function TodoChart({ completed, pending }: TodoAnalyticsProps) {
     return (
         <Card className="flex flex-col">
             <ChartStyle id="todo-pie-chart" config={chartConfig} />
-            <CardHeader className="flex sm:items-center sm:justify-between gap-2 pb-0">
+            <CardHeader className="flex flex-wrap items-center justify-between gap-2 pb-0">
                 <div className="text-nowrap">
                     <CardTitle>Todo Status</CardTitle>
                     <CardDescription className="text-xs">Completed vs Pending</CardDescription>

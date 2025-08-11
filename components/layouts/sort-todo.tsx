@@ -59,7 +59,7 @@ export default function SortTodo({ sorting, setSorting }: SortTodoProps) {
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-72" align="end">
-                <div className="space-y-4">
+                <div className="flex items-center gap-4">
                     {rules.map((rule, index) => (
                         <div key={index} className="flex gap-2">
                             <Select

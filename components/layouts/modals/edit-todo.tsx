@@ -47,7 +47,6 @@ export default function TodoEditModal({
     useEffect(() => {
         if (todo) {
             setText(todo.text);
-            // Focus input when modal opens
             setTimeout(() => inputRef.current?.focus(), 100);
         }
     }, [todo]);
@@ -86,7 +85,12 @@ export default function TodoEditModal({
             e.preventDefault();
             handleSave();
         }
+        if (e.key === "Escape") {
+            e.preventDefault();
+            onClose();
+        }
     };
+
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
@@ -121,7 +125,7 @@ export default function TodoEditModal({
                 >
                     {text.length} / {MAX_LENGTH} characters
                 </p>
-                <DialogFooter className="space-x-2">
+                <DialogFooter className="flex items-center gap-1">
                     <Button
                         variant="secondary"
                         onClick={onClose}

@@ -28,14 +28,16 @@ const TodoPage = () => {
     const filteredTodos = useMemo(() => {
         return todos
             .filter(todo => filter === "all" || todo.status === filter)
-            .filter(todo => todo.text.toLowerCase().includes(searchTerm.toLowerCase()));
+            .filter(todo =>
+                (todo.text ?? "").toLowerCase().includes((searchTerm ?? "").toLowerCase())
+            );
     }, [todos, filter, searchTerm]);
 
     const completedCount = useMemo(() => todos.filter(t => t.status === "completed").length, [todos]);
     const pendingCount = useMemo(() => todos.filter(t => t.status === "pending").length, [todos]);
 
     return (
-        <div className="flex justify-center items-center w-full max-w-7xl min-h-[calc(100vh-60px)] m-auto px-2 pt-[90px] pb-4">
+        <div className="flex justify-center items-center w-full max-w-7xl m-auto px-2 pt-[20px] lg:pt-[90px] pb-4">
             <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}

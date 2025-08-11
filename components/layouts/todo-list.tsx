@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import SortTodo from "@/components/layouts/sort-todo";
 import TodoDeleteDialog from "./modals/delete-todo";
@@ -67,6 +67,7 @@ export default function TodoList({ todos }: TodoListProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [todoToEdit, setTodoToEdit] = useState<Todo | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const editButtonRef = useRef<HTMLButtonElement>(null);
 
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
 
@@ -271,7 +272,7 @@ export default function TodoList({ todos }: TodoListProps) {
                     </Table>
                 </CardContent>
                 <Separator />
-                <CardFooter className="flex justify-between items-center">
+                <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-1">
                     <motion.div
                         key={pagination.pageSize}
                         initial={{ opacity: 0, y: 5 }}

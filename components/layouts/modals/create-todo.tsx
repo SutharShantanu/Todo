@@ -27,6 +27,7 @@ function capitalizeFirstWord(str: string) {
 export default function TodoCreateModal() {
     const [text, setText] = useState("");
     const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false); // control dialog
     const dispatch = useDispatch();
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -37,13 +38,7 @@ export default function TodoCreateModal() {
             rawValue = rawValue.slice(0, MAX_LENGTH);
         }
 
-        if (rawValue.length === 0) {
-            setText("");
-            return;
-        }
-
-        const capitalized = rawValue.charAt(0).toUpperCase() + rawValue.slice(1);
-        setText(capitalized);
+        setText(rawValue.charAt(0).toUpperCase() + rawValue.slice(1));
     };
 
     const onCreate = async () => {
@@ -53,10 +48,16 @@ export default function TodoCreateModal() {
         await new Promise((r) => setTimeout(r, 500));
 
         const formattedText = capitalizeFirstWord(text.trim());
-
         dispatch(addTodo({ text: formattedText }));
+
         setText("");
         setLoading(false);
+        setOpen(false);
+    };
+
+    const handleCancel = () => {
+        setText("");
+        setOpen(false);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -64,35 +65,47 @@ export default function TodoCreateModal() {
             e.preventDefault();
             onCreate();
         }
+        if (e.key === "Escape") {
+            e.preventDefault();
+            handleCancel();
+        }
     };
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="icon" className="rounded-full" aria-label="Create todo">
-                    <Plus className="h-4 w-4" />
+                <Button
+                    size="icon"
+                    className="rounded-full"
+                    aria-label="Create todo"
+                >
+                    <Plus className="h-4 w-4" aria-hidden="true" />
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+
+            <DialogContent
+                aria-label="Add a new todo"
+                aria-describedby="todo-dialog-description"
+                onOpenAutoFocus={() => inputRef.current?.focus()}
+            >
                 <DialogHeader>
                     <DialogTitle>Add Todo</DialogTitle>
                 </DialogHeader>
                 <Separator />
 
                 <Label htmlFor="todo-input" className="block mb-1 font-medium">
-                    Crate a Todo
+                    Create a Todo
                 </Label>
 
                 <Input
                     id="todo-input"
                     ref={inputRef}
-                    className=""
                     placeholder="Enter todo..."
                     value={text}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
                     aria-describedby="char-count"
-                    aria-label="Todo text"
+                    aria-label="Todo text input"
                     maxLength={MAX_LENGTH}
                     autoFocus
                     leftIcon={<Plus
@@ -102,6 +115,7 @@ export default function TodoCreateModal() {
                         strokeWidth={1}
                     />}
                 />
+
                 <p
                     id="char-count"
                     className="mt-1 text-xs text-muted-foreground select-none"
@@ -109,24 +123,26 @@ export default function TodoCreateModal() {
                 >
                     {text.length} / {MAX_LENGTH} characters
                 </p>
-                <DialogFooter className="space-x-2">
+
+                <DialogFooter className="flex items-center gap-1">
                     <Button
                         variant="outline"
-                        onClick={() => setText("")}
+                        onClick={handleCancel}
                         disabled={loading}
                         type="button"
                     >
-                        <CircleX />
+                        <CircleX aria-hidden="true" />
                         Cancel
                     </Button>
                     <Button
+                        className="flex items-center gap-1"
                         onClick={onCreate}
                         disabled={loading || text.trim() === ""}
                         type="submit"
                     >
                         {loading ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-                        ) : <CircleCheck />}
+                            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                        ) : <CircleCheck aria-hidden="true" />}
                         Create
                     </Button>
                 </DialogFooter>
